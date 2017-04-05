@@ -14,11 +14,9 @@ public class Client implements Runnable{
 	private int port;
 	private boolean running = false;
 	
-	public Client(String threadName, InetAddress ip, int port)
+	public Client(String threadName)
 	{
 		this.threadName=threadName;
-		this.ip = ip;
-		this.port=port;
 	}
 	public void start()
 	{
@@ -33,23 +31,10 @@ public class Client implements Runnable{
 	
 	public void run()
 	{
-		Packet incoming = receivePacket(ip, port);
+		Packet incoming = receivePacket();
 		myCode.run(incoming);
 	}
 	
-	
-	
-	
-	
-	
-	public InetAddress getIp()
-	{
-		return ip;
-	}
-	public int getPort()
-	{
-		return port;
-	}
 
 	
 }

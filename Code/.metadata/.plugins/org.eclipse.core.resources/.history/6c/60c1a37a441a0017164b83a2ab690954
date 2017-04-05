@@ -33,7 +33,7 @@ public class Client implements Runnable{
 	
 	public void run()
 	{
-		Packet incoming = receivePacket(ip, port);
+		Packet incoming = receivePacket();
 		myCode.run(incoming);
 	}
 	
