@@ -10,6 +10,8 @@ import net.kerfuffle.Utilities.Network.Client;
 import net.kerfuffle.Utilities.Network.MyCode;
 import net.kerfuffle.Utilities.Network.Packet;
 import net.kerfuffle.Utilities.Network.Server;
+import net.kerfuffle.Utilities.Network.User;
+import net.kerfuffle.example.Packets.*;
 
 public class Main {
 
@@ -43,9 +45,19 @@ public class Main {
 					{
 						public void run(Object... obj) 
 						{
-							Packet p = (Packet)obj[0];
+							Packet packet = (Packet)obj[0];
 							
-							
+							if (packet.getId() == Global.LOGIN)
+							{
+								PacketLogin p = (PacketLogin)packet;
+								User u = new User(p.getUsername(), p.getIp(), p.getPort());
+								client.addUser(u);
+							}
+							if (packet.getId() == Global.DISCONNECT)
+							{
+								PacketDisconnect p = (PacketDisconnect)packet;
+								client.removeUser(p.getIp(), p.getPort());
+							}
 						}
 					});
 			
