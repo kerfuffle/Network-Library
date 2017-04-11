@@ -50,18 +50,13 @@ public class Main {
 							if (packet.getId() == Global.LOGIN)
 							{
 								PacketLogin p = (PacketLogin)packet;
-								User u = new User(p.getUsername());	//for client the ip and port would just be the server
+								User u = new User(p.getUsername(), p.getIp(), p.getPort());
 								client.addUser(u);
 							}
 							if (packet.getId() == Global.DISCONNECT)
 							{
 								PacketDisconnect p = (PacketDisconnect)packet;
 								client.removeUser(p.getIp(), p.getPort());
-							}
-							if (packet.getId() == Global.MESSAGE)
-							{
-								PacketMessage p = (PacketMessage)packet;
-								System.out.println(">>"+ client.getUsername(p.getIp(), p.getPort()) + ": " + p.getMessage());
 							}
 						}
 					});
@@ -71,27 +66,6 @@ public class Main {
 		}
 		else if (type == SERVER)
 		{
-			server.setMyCode(new MyCode()
-					{
-						public void run(Object... obj)
-						{
-							Packet packet = (Packet)obj[0];
-							
-							if (packet.getId() == Global.LOGIN)
-							{
-								
-							}
-							if (packet.getId() == Global.DISCONNECT)
-							{
-								
-							}
-							if (packet.getId() == Global.MESSAGE)
-							{
-								
-							}
-						}
-						
-					});
 			server.start();
 		}
 	}

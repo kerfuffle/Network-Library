@@ -18,14 +18,8 @@ public abstract class Packet {
 	{
 		this.data=data;
 		this.id = id;
-		this.ip=ip;
-		this.port=port;
 	}
-	public Packet(String data, int id)
-	{
-		this.data=data;
-		this.id=id;
-	}
+	
 	
 	public String getData()
 	{
@@ -43,9 +37,6 @@ public abstract class Packet {
 	{
 		return port;
 	}
-	
-	public abstract String getClientSendData();
-	public abstract String getServerSendData();
 	
 	//For client
 	public static Packet receivePacket(InetAddress ip, int port)

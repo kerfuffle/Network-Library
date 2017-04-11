@@ -67,19 +67,6 @@ public class Client implements Runnable{
 		}
 	}
 	
-	public String getUsername(InetAddress ip, int port)
-	{
-		for (User u : users)
-		{
-			if (u.getIp().toString().equals(ip.toString()) && u.getPort() == port)
-			{
-				return u.getUsername();
-			}
-		}
-		
-		System.err.println("IP and Port do not match any users.");
-		return null;
-	}
 	
 	public InetAddress getIp()
 	{

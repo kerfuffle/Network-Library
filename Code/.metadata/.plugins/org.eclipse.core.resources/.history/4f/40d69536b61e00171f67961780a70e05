@@ -13,7 +13,7 @@ public class PacketLogin extends Packet{
 	
 	public PacketLogin(String data)
 	{
-		super(data, id);
+		super(data, id, null, -1);
 		
 		if (data.contains(","))	// means it is coming from server
 		{
@@ -30,11 +30,7 @@ public class PacketLogin extends Packet{
 	{
 		return username;
 	}
-	public String getClientSendData()
-	{
-		return (id + "," + username + ",");
-	}
-	public String getServerSendData()
+	public String getSendData()
 	{
 		return (id + "," + username + ",");
 	}

@@ -7,17 +7,16 @@ public class PacketMessage extends Packet{
 
 	private static final int id = Global.MESSAGE;
 	
-	private String message, username;
+	private String message;
 	
 	public PacketMessage(String data)
 	{
-		super(data, id);
+		super(data, id, null, -1);
 		
-		if (data.contains(","))	//from server
+		if (data.contains(","))
 		{
 			String sp[] = data.split(",");
-			username = sp[1];
-			message = sp[2];
+			message = sp[1];
 		}
 		else
 		{
@@ -29,12 +28,8 @@ public class PacketMessage extends Packet{
 	{
 		return message;
 	}
-	public String getClientSendData()
+	public String getSendData()
 	{
 		return (id+","+message+",");
-	}
-	public String getServerSendData()
-	{
-		return (id+","+username+","+message+",");
 	}
 }

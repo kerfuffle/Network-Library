@@ -3,21 +3,20 @@ package net.kerfuffle.example.Packets;
 import net.kerfuffle.Utilities.Network.Packet;
 import net.kerfuffle.example.Global;
 
-public class PacketDisconnect extends Packet{
+public class PacketMessage extends Packet{
 
-	private final static int id = Global.DISCONNECT;
+	private static final int id = Global.MESSAGE;
 	
 	private String message, username;
 	
-	public PacketDisconnect(String data)
+	public PacketMessage(String data)
 	{
 		super(data, id);
 		
 		if (data.contains(","))
 		{
 			String sp[] = data.split(",");
-			username = sp[1];
-			message = sp[2];
+			message = sp[1];
 		}
 		else
 		{
@@ -29,17 +28,8 @@ public class PacketDisconnect extends Packet{
 	{
 		return message;
 	}
-	public String getUsername()
-	{
-		return username;
-	}
-	
 	public String getClientSendData()
 	{
-		return (id + "," + message + ",");
-	}
-	public String getServerSendData()
-	{
-		return (id + "," + username + "," + message + ",");
+		return (id+","+message+",");
 	}
 }

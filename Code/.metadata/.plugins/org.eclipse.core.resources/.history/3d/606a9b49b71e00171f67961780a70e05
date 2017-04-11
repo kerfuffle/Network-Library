@@ -11,7 +11,7 @@ public class PacketDisconnect extends Packet{
 	
 	public PacketDisconnect(String data)
 	{
-		super(data, id);
+		super(data, id, null, -1);
 		
 		if (data.contains(","))
 		{
