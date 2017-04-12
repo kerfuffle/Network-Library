@@ -1,8 +1,13 @@
 package net.kerfuffle.Utilities.Network;
 
+import java.io.IOException;
+import java.net.DatagramPacket;
+import java.net.DatagramSocket;
 import java.net.InetAddress;
 
-public abstract class Packet {
+import net.kerfuffle.example.Global;
+
+public class Packet {
 	
 	private int id = -1;
 	private String data;
@@ -18,6 +23,12 @@ public abstract class Packet {
 	{
 		this.data=data;
 		this.id = id;
+		this.ip=ip;
+		this.port=port;
+	}
+	public Packet(String data, InetAddress ip, int port)
+	{
+		this.data=data;
 		this.ip=ip;
 		this.port=port;
 	}
@@ -44,19 +55,34 @@ public abstract class Packet {
 		return port;
 	}
 	
-	public abstract String getClientSendData();
-	public abstract String getServerSendData();
-	
-	//For client
-	public static Packet receivePacket(InetAddress ip, int port)
+	public static void sendPacket(Packet p, DatagramSocket socket, InetAddress ip, int port) throws IOException
 	{
-		return null;
+		if (p.toString() == null)
+		{
+			return;
+		}
+		
+		byte buffer[] = p.toString().getBytes();
+		DatagramPacket sendPacket = new DatagramPacket(buffer, buffer.length, ip, port);
+		socket.send(sendPacket);
 	}
-
-	// For server
-	public static Packet receivePacket(int port)
+	
+	//TODO
+	public static Packet receivePacket(DatagramSocket socket) throws IOException
 	{
-		return null;
+		byte buffer[] = new byte[256];
+		DatagramPacket receivePacket = new DatagramPacket(buffer, buffer.length);
+		socket.receive(receivePacket);
+		
+		String data = new String(buffer);
+		String sp[] = data.split(",");
+		
+		Packet p = new Packet(data, receivePacket.getAddress(), receivePacket.getPort());
+		
+		System.out.println(sp[0]);
+		int id = Integer.parseInt(sp[0]);
+		
+		return Global.processPacket(p, id);
 	}
 	
 }

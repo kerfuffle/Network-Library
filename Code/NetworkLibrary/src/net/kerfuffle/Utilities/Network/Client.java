@@ -1,32 +1,38 @@
 package net.kerfuffle.Utilities.Network;
 
+import java.io.IOException;
+import java.net.DatagramSocket;
 import java.net.InetAddress;
+import java.net.SocketException;
 import java.util.ArrayList;
 
 import static net.kerfuffle.Utilities.Network.Packet.*;
 
 public class Client implements Runnable{
 
-	private Thread thread;
+	private Thread t;
 	private String threadName;
 	private MyCode myCode;
 	
+	private DatagramSocket socket;
 	private InetAddress ip;
 	private int port;
 	private boolean running = false;
 	
 	private ArrayList <User> users = new ArrayList <User>();
 	
-	public Client(String threadName, InetAddress ip, int port)
+	public Client(String threadName, InetAddress ip, int port) throws SocketException
 	{
 		this.threadName=threadName;
 		this.ip = ip;
 		this.port=port;
+		socket = new DatagramSocket();
 	}
 	public void start()
 	{
 		running = true;
-		// start the thread
+		t = new Thread(this, threadName);
+		t.start();
 	}
 	
 	public void setMyCode(MyCode myCode)
@@ -36,12 +42,23 @@ public class Client implements Runnable{
 	
 	public void run()
 	{
-		Packet incoming = receivePacket(ip, port);
-		myCode.run(incoming);
+		Packet incoming = null;
+		try 
+		{
+			incoming = receivePacket(socket);
+			myCode.run(incoming);
+		} 
+		catch (IOException e) 
+		{
+			e.printStackTrace();
+		}
 	}
 	
 	
-	
+	public boolean isRunning()
+	{
+		return running;
+	}
 	
 	public void addUser(User u)
 	{
@@ -88,6 +105,11 @@ public class Client implements Runnable{
 	public int getPort()
 	{
 		return port;
+	}
+	
+	public void sendPacket(Packet p) throws IOException
+	{
+		Packet.sendPacket(p, socket, ip, port);
 	}
 
 	

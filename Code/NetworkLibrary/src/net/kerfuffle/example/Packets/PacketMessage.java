@@ -13,16 +13,19 @@ public class PacketMessage extends Packet{
 	{
 		super(data, id);
 		
-		if (data.contains(","))	//from server
+		if (data.contains(","))	//from server, being processed by client
 		{
 			String sp[] = data.split(",");
 			username = sp[1];
 			message = sp[2];
 		}
-		else
-		{
-			message = data;
-		}
+	}
+	public PacketMessage(String username, String message)
+	{
+		super("Sending From Server", id);
+		
+		this.username=username;
+		this.message=message;
 	}
 	
 	public String getMessage()

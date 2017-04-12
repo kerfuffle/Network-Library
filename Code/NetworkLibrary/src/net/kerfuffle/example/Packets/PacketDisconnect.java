@@ -19,10 +19,12 @@ public class PacketDisconnect extends Packet{
 			username = sp[1];
 			message = sp[2];
 		}
-		else
-		{
-			message = data;
-		}
+	}
+	public PacketDisconnect(String username, String message)
+	{
+		super("Sending From Server", id);
+		this.username=username;
+		this.message=message;
 	}
 	
 	public String getMessage()

@@ -1,16 +1,22 @@
 package net.kerfuffle.example;
 
+import java.io.IOException;
 import java.util.Scanner;
+
+import net.kerfuffle.Utilities.Network.Client;
+import net.kerfuffle.example.Packets.PacketMessage;
 
 public class Game implements Runnable{
 
 	private Thread t;
 	private String threadName, nextMessage;
 	private boolean running = false;
+	private Client client;
 	
-	public Game(String threadName)
+	public Game(String threadName, Client client)
 	{
 		this.threadName = threadName;
+		this.client = client;
 	}
 	
 	public void run()
@@ -20,7 +26,15 @@ public class Game implements Runnable{
 			Scanner scan = new Scanner(System.in);
 			nextMessage = scan.nextLine();
 			
-			// maybe send packet from here
+			PacketMessage pm = new PacketMessage(nextMessage);
+			try 
+			{
+				client.sendPacket(pm);
+			} 
+			catch (IOException e) 
+			{
+				e.printStackTrace();
+			}
 		}
 	}
 	

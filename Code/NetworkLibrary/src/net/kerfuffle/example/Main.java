@@ -1,6 +1,8 @@
 package net.kerfuffle.example;
 
+import java.io.IOException;
 import java.net.InetAddress;
+import java.net.SocketException;
 import java.net.UnknownHostException;
 import java.util.Scanner;
 
@@ -19,16 +21,23 @@ public class Main {
 	
 	private Client client;
 	private Server server;
+	private Game game;
 	private int type = -1;
 	
-	public Main(int type) throws NumberFormatException, UnknownHostException
+	public Main(int type) throws NumberFormatException, IOException
 	{
 		this.type = type;
 		if (type == CLIENT)
 		{
 			String in = JOptionPane.showInputDialog("Ip:Port");
 			String sp[] = in.split(":");
+			String username = JOptionPane.showInputDialog("Username");
 			client = new Client("Client Thread", InetAddress.getByName(sp[0]), Integer.parseInt(sp[1]));
+			
+			PacketLogin login = new PacketLogin(username);
+			client.sendPacket(login);
+			
+			game = new Game("Game Thread", client);
 		}
 		else if (type == SERVER)
 		{
@@ -45,50 +54,74 @@ public class Main {
 					{
 						public void run(Object... obj) 
 						{
-							Packet packet = (Packet)obj[0];
-							
-							if (packet.getId() == Global.LOGIN)
+							while (client.isRunning())
 							{
-								PacketLogin p = (PacketLogin)packet;
-								User u = new User(p.getUsername());	//for client the ip and port would just be the server
-								client.addUser(u);
-							}
-							if (packet.getId() == Global.DISCONNECT)
-							{
-								PacketDisconnect p = (PacketDisconnect)packet;
-								client.removeUser(p.getIp(), p.getPort());
-							}
-							if (packet.getId() == Global.MESSAGE)
-							{
-								PacketMessage p = (PacketMessage)packet;
-								System.out.println(">>"+ client.getUsername(p.getIp(), p.getPort()) + ": " + p.getMessage());
+								Packet packet = (Packet)obj[0];
+								
+								if (packet.getId() == Global.LOGIN)
+								{
+									PacketLogin p = (PacketLogin)packet;
+									User u = new User(p.getUsername());	//for client the ip and port would just be the server
+									client.addUser(u);
+								}
+								if (packet.getId() == Global.DISCONNECT)
+								{
+									PacketDisconnect p = (PacketDisconnect)packet;
+									System.out.println("***" + p.getUsername() + " disconnected because " + p.getMessage());
+									client.removeUser(p.getIp(), p.getPort());
+								}
+								if (packet.getId() == Global.MESSAGE)
+								{
+									PacketMessage p = (PacketMessage)packet;
+									System.out.println(">>"+ client.getUsername(p.getIp(), p.getPort()) + ": " + p.getMessage());
+								}
 							}
 						}
 					});
 			
 			
 			client.start();
+			
+			game.start();
 		}
 		else if (type == SERVER)
 		{
 			server.setMyCode(new MyCode()
 					{
-						public void run(Object... obj)
+						public void run(Object... obj) throws IOException
 						{
-							Packet packet = (Packet)obj[0];
+							while (server.isRunning())
+							{
+								Packet packet = (Packet)obj[0];
+								
+								if (packet.getId() == Global.LOGIN)
+								{
+									PacketLogin p = (PacketLogin)packet;
+									User u = new User(p.getUsername(), p.getIp(), p.getPort());
+									server.addUser(u);
+									
+									PacketLogin send = new PacketLogin(p.getUsername());
+									server.sendToAllUsers(send);
+								}
+								if (packet.getId() == Global.DISCONNECT)
+								{
+									PacketDisconnect p = (PacketDisconnect)packet;
+									System.out.println("***" + p.getUsername() + " disconnected because " + p.getMessage());
+									server.removeUser(p.getIp(), p.getPort());
+									
+									PacketDisconnect send = new PacketDisconnect(p.getUsername(), p.getMessage());
+									server.sendToAllUsers(send);
+									//tell all clients a user has disconnected
+								}
+								if (packet.getId() == Global.MESSAGE)
+								{
+									PacketMessage p = (PacketMessage)packet;
+									
+									PacketMessage send = new PacketMessage(server.getUsername(p.getIp(), p.getPort()), p.getMessage());
+									server.sendToAllUsers(send);
+								}
+							}
 							
-							if (packet.getId() == Global.LOGIN)
-							{
-								
-							}
-							if (packet.getId() == Global.DISCONNECT)
-							{
-								
-							}
-							if (packet.getId() == Global.MESSAGE)
-							{
-								
-							}
 						}
 						
 					});
@@ -107,7 +140,7 @@ public class Main {
 	
 	
 	
-	public static void main (String args[]) throws NumberFormatException, UnknownHostException
+	public static void main (String args[]) throws NumberFormatException, IOException
 	{
 		int type = JOptionPane.showOptionDialog(null, "Server or Client?", "Type",
 		        JOptionPane.DEFAULT_OPTION, JOptionPane.PLAIN_MESSAGE,
