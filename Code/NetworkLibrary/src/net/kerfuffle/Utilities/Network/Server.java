@@ -41,14 +41,17 @@ public class Server implements Runnable{
 	public void run()
 	{
 		Packet incoming = null;
-		try 
+		while (running)
 		{
-			incoming = receivePacket(socket);
-			myCode.run(incoming);
-		} 
-		catch (IOException e) 
-		{
-			e.printStackTrace();
+			try 
+			{
+				incoming = receivePacket(socket);
+				myCode.run(incoming);
+			} 
+			catch (IOException e) 
+			{
+				e.printStackTrace();
+			}
 		}
 	}
 
@@ -105,6 +108,17 @@ public class Server implements Runnable{
 	{
 		for (User u : users)
 		{
+			Packet.sendPacket(p, socket, u.getIp(), u.getPort());
+		}
+	}
+	public void sendToAllUsersExcept(Packet p, InetAddress ip, int port) throws IOException
+	{
+		for (User u : users)
+		{
+			if (u.getIp().toString().equals(ip.toString()) && u.getPort() == port)
+			{
+				continue;
+			}
 			Packet.sendPacket(p, socket, u.getIp(), u.getPort());
 		}
 	}

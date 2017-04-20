@@ -40,17 +40,25 @@ public class Client implements Runnable{
 		this.myCode = myCode;
 	}
 	
+	public void close()
+	{
+		running = false;
+	}
+	
 	public void run()
 	{
 		Packet incoming = null;
-		try 
+		while (isRunning())
 		{
-			incoming = receivePacket(socket);
-			myCode.run(incoming);
-		} 
-		catch (IOException e) 
-		{
-			e.printStackTrace();
+			try 
+			{
+				incoming = receivePacket(socket);
+				myCode.run(incoming);
+			} 
+			catch (IOException e) 
+			{
+				e.printStackTrace();
+			}
 		}
 	}
 	
@@ -72,30 +80,16 @@ public class Client implements Runnable{
 	{
 		users.remove(i);
 	}
-	public void removeUser(InetAddress ip, int port)
+	public void removeUser(String username)
 	{
 		for (User u : users)
 		{
-			if (u.getIp().toString().equals(ip.toString()) && u.getPort() == port)
+			if (u.getUsername().equals(username))
 			{
 				users.remove(u);
 				return;
 			}
 		}
-	}
-	
-	public String getUsername(InetAddress ip, int port)
-	{
-		for (User u : users)
-		{
-			if (u.getIp().toString().equals(ip.toString()) && u.getPort() == port)
-			{
-				return u.getUsername();
-			}
-		}
-		
-		System.err.println("IP and Port do not match any users.");
-		return null;
 	}
 	
 	public InetAddress getIp()
@@ -111,6 +105,5 @@ public class Client implements Runnable{
 	{
 		Packet.sendPacket(p, socket, ip, port);
 	}
-
 	
 }

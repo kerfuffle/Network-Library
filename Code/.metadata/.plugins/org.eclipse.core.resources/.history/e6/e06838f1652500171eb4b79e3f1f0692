@@ -1,0 +1,36 @@
+package net.kerfuffle.example.Packets;
+
+import java.net.InetAddress;
+
+import net.kerfuffle.example.Global;
+
+public class PacketLogin extends Packet{
+	
+	private String username;
+	
+	public PacketLogin(){}
+	public PacketLogin(String data)
+	{
+		super(data, Global.LOGIN);
+		
+		if (data.contains(","))	// means it is coming from server
+		{
+			String sp[] = data.split(",");
+			username = sp[1];
+		}
+		else	//means it is coming from client
+		{
+			username = data;
+		}
+	}
+	
+	public String getUsername()
+	{
+		return username;
+	}
+	public String toString()
+	{
+		return (id + "," + username + ",");
+	}
+	
+}

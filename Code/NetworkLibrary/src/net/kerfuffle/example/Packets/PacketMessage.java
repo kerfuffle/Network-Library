@@ -1,40 +1,29 @@
 package net.kerfuffle.example.Packets;
 
+import java.net.InetAddress;
+
 import net.kerfuffle.Utilities.Network.Packet;
 import net.kerfuffle.example.Global;
 
 public class PacketMessage extends Packet{
-
-	private static final int id = Global.MESSAGE;
 	
-	private String message, username;
+	private String message;
 	
-	public PacketMessage(String data)
+	public PacketMessage(String data, InetAddress ip, int port)
 	{
-		super(data, id);
+		super(data, Global.MESSAGE, ip, port);
 		
-		if (data.contains(","))	//from server, being processed by client
-		{
-			String sp[] = data.split(",");
-			username = sp[1];
-			message = sp[2];
-		}
+		String sp[] = data.split(",");
+		message = sp[1];
 	}
-	public PacketMessage(String username, String message)
+	public PacketMessage (String message)
 	{
-		super("Sending From Server", id);
-		
-		this.username=username;
 		this.message=message;
+		data = (Global.MESSAGE+","+message+",");
 	}
 	
 	public String getMessage()
 	{
 		return message;
-	}
-	
-	public String toString()
-	{
-		return (id+","+message+",");
 	}
 }

@@ -1,30 +1,40 @@
 package net.kerfuffle.example.Packets;
 
+import java.net.InetAddress;
+
 import net.kerfuffle.Utilities.Network.Packet;
 import net.kerfuffle.example.Global;
 
 public class PacketDisconnect extends Packet{
-
-	private final static int id = Global.DISCONNECT;
 	
 	private String message, username;
 	
-	public PacketDisconnect(String data)
+	public PacketDisconnect(String data, InetAddress ip, int port)
 	{
-		super(data, id);
+		super(data, Global.DISCONNECT, ip, port);
 		
-		if (data.contains(","))
+		if (Global.Type == Global.CLIENT)
 		{
 			String sp[] = data.split(",");
 			username = sp[1];
 			message = sp[2];
 		}
+		else if (Global.Type == Global.SERVER)
+		{
+			String sp[] = data.split(",");
+			message = sp[1];
+		}
+		
 	}
-	public PacketDisconnect(String username, String message)
+	public PacketDisconnect(String message)
 	{
-		super("Sending From Server", id);
-		this.username=username;
 		this.message=message;
+		data = (Global.DISCONNECT + "," + message + ",");
+	}
+	public PacketDisconnect (String username, String message)
+	{
+		this.message=message;
+		data = (Global.DISCONNECT+","+username+","+message+",");
 	}
 	
 	public String getMessage()
@@ -35,10 +45,4 @@ public class PacketDisconnect extends Packet{
 	{
 		return username;
 	}
-	
-	public String toString()
-	{
-		return (id + "," + message + ",");
-	}
-	
 }

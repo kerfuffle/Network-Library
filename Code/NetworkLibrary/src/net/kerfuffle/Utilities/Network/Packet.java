@@ -6,7 +6,6 @@ import java.net.DatagramSocket;
 import java.net.InetAddress;
 
 import net.kerfuffle.example.Global;
-import net.kerfuffle.example.Packets.PacketLogin;
 
 public class Packet {
 	
@@ -56,6 +55,11 @@ public class Packet {
 	{
 		return port;
 	}
+	public String toString()
+	{
+		return data;
+	}
+	
 	
 	public static void sendPacket(Packet p, DatagramSocket socket, InetAddress ip, int port) throws IOException
 	{
@@ -80,11 +84,10 @@ public class Packet {
 		String sp[] = data.split(",");
 		
 		int id = Integer.parseInt(sp[0]);
-		Packet p = new Packet(data, receivePacket.getAddress(), receivePacket.getPort());
+		Packet p = new Packet(data, id, receivePacket.getAddress(), receivePacket.getPort());
 		
-		return Global.processPacket(p, id);
+		return p;
 	}
 	
 }
-
 

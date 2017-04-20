@@ -9,28 +9,22 @@ public class PacketLogin extends Packet{
 	
 	private String username;
 	
-	public PacketLogin(String data)
+	public PacketLogin(String data, InetAddress ip, int port)
 	{
-		super(data, Global.LOGIN);
+		super(data, Global.LOGIN, ip, port);
 		
-		if (data.contains(","))	// means it is coming from server
-		{
-			String sp[] = data.split(",");
-			username = sp[1];
-		}
-		else	//means it is coming from client
-		{
-			username = data;
-		}
+		String sp[] = data.split(",");
+		username = sp[1];
 	}
+	public PacketLogin(String username)
+	{
+		this.username = username;
+		data = (Global.LOGIN + "," + username + ",");
+	}
+	
 	
 	public String getUsername()
 	{
 		return username;
 	}
-	public String toString()
-	{
-		return (id + "," + username + ",");
-	}
-	
 }

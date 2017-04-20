@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.Scanner;
 
 import net.kerfuffle.Utilities.Network.Client;
+import net.kerfuffle.example.Packets.PacketDisconnect;
 import net.kerfuffle.example.Packets.PacketMessage;
 
 public class Game implements Runnable{
@@ -25,6 +26,23 @@ public class Game implements Runnable{
 		{
 			Scanner scan = new Scanner(System.in);
 			nextMessage = scan.nextLine();
+			
+			if (nextMessage.equalsIgnoreCase("quit"))
+			{
+				PacketDisconnect pd = new PacketDisconnect("free will");
+				try 
+				{
+					client.sendPacket(pd);
+				} 
+				catch (IOException e) 
+				{
+					e.printStackTrace();
+				}
+				scan.close();
+				client.close();
+				running = false;
+				return;
+			}
 			
 			PacketMessage pm = new PacketMessage(nextMessage);
 			try 
