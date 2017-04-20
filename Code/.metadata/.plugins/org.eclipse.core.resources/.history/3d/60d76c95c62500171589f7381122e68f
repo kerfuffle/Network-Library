@@ -63,7 +63,7 @@ public class Main {
 					if (packet.getId() == Global.DISCONNECT)
 					{
 						PacketDisconnect p = new PacketDisconnect(packet.getData(), packet.getIp(), packet.getPort());
-						System.out.println("***" + p.getUsername() + " disconnected because: " + p.getMessage());
+						System.out.println("***" + p.getUsername() + " disconnected because " + p.getMessage());
 						client.removeUser(p.getUsername());
 					}
 					if (packet.getId() == Global.MESSAGE)
@@ -75,7 +75,9 @@ public class Main {
 				}
 			});
 
+
 			client.start();
+
 			game.start();
 		}
 		else if (Global.Type == SERVER)
@@ -115,6 +117,8 @@ public class Main {
 						server.sendToAllUsersExcept(send, p.getIp(), p.getPort());
 					}
 				}
+
+
 
 			});
 			server.start();

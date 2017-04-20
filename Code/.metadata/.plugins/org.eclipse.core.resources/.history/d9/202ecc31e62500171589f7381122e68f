@@ -22,10 +22,9 @@ public class Game implements Runnable{
 	
 	public void run()
 	{
-		Scanner scan = new Scanner(System.in);
 		while (running)
 		{
-			
+			Scanner scan = new Scanner(System.in);
 			nextMessage = scan.nextLine();
 			
 			if (nextMessage.equalsIgnoreCase("quit"))
@@ -55,7 +54,6 @@ public class Game implements Runnable{
 				e.printStackTrace();
 			}
 		}
-		scan.close();
 	}
 	
 	public void start()

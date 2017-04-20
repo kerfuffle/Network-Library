@@ -75,7 +75,9 @@ public class Main {
 				}
 			});
 
+
 			client.start();
+
 			game.start();
 		}
 		else if (Global.Type == SERVER)
@@ -115,6 +117,8 @@ public class Main {
 						server.sendToAllUsersExcept(send, p.getIp(), p.getPort());
 					}
 				}
+
+
 
 			});
 			server.start();
