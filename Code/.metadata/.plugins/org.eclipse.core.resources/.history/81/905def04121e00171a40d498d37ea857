@@ -1,5 +1,0 @@
-package net.kerfuffle.example.Packets;
-
-public class PacketDisconnect {
-
-}

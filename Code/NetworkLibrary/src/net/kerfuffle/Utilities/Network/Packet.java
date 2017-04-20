@@ -6,11 +6,12 @@ import java.net.DatagramSocket;
 import java.net.InetAddress;
 
 import net.kerfuffle.example.Global;
+import net.kerfuffle.example.Packets.PacketLogin;
 
 public class Packet {
 	
-	private int id = -1;
-	private String data;
+	protected int id = -1;
+	protected String data;
 	
 	private InetAddress ip;
 	private int port;
@@ -37,6 +38,7 @@ public class Packet {
 		this.data=data;
 		this.id=id;
 	}
+	public Packet(){}
 	
 	public String getData()
 	{
@@ -74,15 +76,15 @@ public class Packet {
 		DatagramPacket receivePacket = new DatagramPacket(buffer, buffer.length);
 		socket.receive(receivePacket);
 		
-		String data = new String(buffer);
+		String data = new String(receivePacket.getData());
 		String sp[] = data.split(",");
 		
-		Packet p = new Packet(data, receivePacket.getAddress(), receivePacket.getPort());
-		
-		System.out.println(sp[0]);
 		int id = Integer.parseInt(sp[0]);
+		Packet p = new Packet(data, receivePacket.getAddress(), receivePacket.getPort());
 		
 		return Global.processPacket(p, id);
 	}
 	
 }
+
+

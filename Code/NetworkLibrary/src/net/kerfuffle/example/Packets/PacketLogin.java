@@ -7,13 +7,11 @@ import net.kerfuffle.example.Global;
 
 public class PacketLogin extends Packet{
 	
-	private final static int id = Global.LOGIN;
-	
 	private String username;
 	
 	public PacketLogin(String data)
 	{
-		super(data, id);
+		super(data, Global.LOGIN);
 		
 		if (data.contains(","))	// means it is coming from server
 		{
@@ -30,11 +28,7 @@ public class PacketLogin extends Packet{
 	{
 		return username;
 	}
-	public String getClientSendData()
-	{
-		return (id + "," + username + ",");
-	}
-	public String getServerSendData()
+	public String toString()
 	{
 		return (id + "," + username + ",");
 	}

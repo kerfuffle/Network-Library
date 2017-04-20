@@ -32,12 +32,9 @@ public class PacketMessage extends Packet{
 	{
 		return message;
 	}
-	public String getClientSendData()
+	
+	public String toString()
 	{
 		return (id+","+message+",");
-	}
-	public String getServerSendData()
-	{
-		return (id+","+username+","+message+",");
 	}
 }

@@ -36,12 +36,9 @@ public class PacketDisconnect extends Packet{
 		return username;
 	}
 	
-	public String getClientSendData()
+	public String toString()
 	{
 		return (id + "," + message + ",");
 	}
-	public String getServerSendData()
-	{
-		return (id + "," + username + "," + message + ",");
-	}
+	
 }
