@@ -104,6 +104,10 @@ public class Server implements Runnable{
 		return null;
 	}
 	
+	public void sendToUser(Packet p, InetAddress ip, int port) throws IOException
+	{
+		Packet.sendPacket(p, socket, ip, port);
+	}
 	public void sendToAllUsers(Packet p) throws IOException
 	{
 		for (User u : users)

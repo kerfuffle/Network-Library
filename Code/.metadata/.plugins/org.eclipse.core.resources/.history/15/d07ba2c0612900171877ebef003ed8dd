@@ -1,33 +1,36 @@
 package net.kerfuffle.Utilities.Network;
 
+import static net.kerfuffle.Utilities.Network.Packet.*;
+
 import java.io.IOException;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.SocketException;
 import java.util.ArrayList;
 
-import static net.kerfuffle.Utilities.Network.Packet.*;
-
-public class Client implements Runnable{
-
+public class Server implements Runnable{
+	
 	private Thread t;
 	private String threadName;
-	private MyCode myCode;
-	
-	private DatagramSocket socket;
-	private InetAddress ip;
 	private int port;
 	private boolean running = false;
+	private MyCode myCode;
+	private DatagramSocket socket;
 	
-	private ArrayList <User> users = new ArrayList <User>();
+	private ArrayList <User> users = new ArrayList<User>();
 	
-	public Client(String threadName, InetAddress ip, int port) throws SocketException
+	public Server(String threadName, int port) throws SocketException
 	{
-		this.threadName=threadName;
-		this.ip = ip;
-		this.port=port;
-		socket = new DatagramSocket();
+		this.port = port;
+		this.threadName = threadName;
+		socket = new DatagramSocket(port);
 	}
+
+	public void setMyCode(MyCode myCode)
+	{
+		this.myCode = myCode;
+	}
+	
 	public void start()
 	{
 		running = true;
@@ -35,24 +38,23 @@ public class Client implements Runnable{
 		t.start();
 	}
 	
-	public void setMyCode(MyCode myCode)
-	{
-		this.myCode = myCode;
-	}
-	
 	public void run()
 	{
 		Packet incoming = null;
-		try 
+		while (running)
 		{
-			incoming = receivePacket(socket);
-			myCode.run(incoming);
-		} 
-		catch (IOException e) 
-		{
-			e.printStackTrace();
+			try 
+			{
+				incoming = receivePacket(socket);
+				myCode.run(incoming);
+			} 
+			catch (IOException e) 
+			{
+				e.printStackTrace();
+			}
 		}
 	}
+
 	
 	
 	public boolean isRunning()
@@ -60,6 +62,10 @@ public class Client implements Runnable{
 		return running;
 	}
 	
+	public int getPort()
+	{
+		return port;
+	}
 	public void addUser(User u)
 	{
 		users.add(u);
@@ -68,7 +74,7 @@ public class Client implements Runnable{
 	{
 		users.remove(u);
 	}
-	public void removeUser(int i)
+	public void removeUser (int i)
 	{
 		users.remove(i);
 	}
@@ -98,19 +104,23 @@ public class Client implements Runnable{
 		return null;
 	}
 	
-	public InetAddress getIp()
+	public void sendToAllUsers(Packet p) throws IOException
 	{
-		return ip;
+		for (User u : users)
+		{
+			Packet.sendPacket(p, socket, u.getIp(), u.getPort());
+		}
 	}
-	public int getPort()
+	public void sendToAllUsersExcept(Packet p, InetAddress ip, int port) throws IOException
 	{
-		return port;
+		for (User u : users)
+		{
+			if (u.getIp().toString().equals(ip.toString()) && u.getPort() == port)
+			{
+				continue;
+			}
+			Packet.sendPacket(p, socket, u.getIp(), u.getPort());
+		}
 	}
-	
-	public void sendPacket(Packet p) throws IOException
-	{
-		Packet.sendPacket(p, socket, ip, port);
-	}
-
 	
 }
